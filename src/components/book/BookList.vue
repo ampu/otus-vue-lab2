@@ -158,3 +158,31 @@ const perPage = ref(5)
 
 onBeforeMount(fetchBooks)
 </script>
+
+<style lang="scss" scoped>
+.input-group {
+  @include tablet-mobile {
+    .input-group-text {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    input {
+      width: 100%;
+
+      &:first-of-type {
+        border-radius: 5px 5px 0 0 !important;
+        border-bottom: none !important;
+      }
+
+      &:last-of-type {
+        border-radius: 0 0 5px 5px !important;
+        border-top: none !important;
+      }
+    }
+  }
+}
+</style>

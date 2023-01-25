@@ -16,4 +16,11 @@ export default defineConfig({
   build: {
     outDir: `build`,
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: '@import "@/assets/mixins";',
+      },
+    },
+  },
 })

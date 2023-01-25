@@ -7,7 +7,9 @@
       <td colspan="10">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            Showing <b v-text="first"/> to <b v-text="latest"/> of <b v-text="props.filtered"/> entries
+            Showing <b v-text="first"/> to <b v-text="latest"/>
+            of <b v-text="props.filtered"/> entries
+            <template v-if="isFiltered">(filtered from <b v-text="props.total"/> total)</template>
           </div>
 
           <APagination
