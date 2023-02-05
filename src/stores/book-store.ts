@@ -12,8 +12,19 @@ export const useBookStore = defineStore(`book`, () => {
 
   const getFetchStatus = () => fetchStatus.value
 
+  const getBook = (bookId: string) => {
+    return books.value.find((book) => book.id === bookId)
+  }
+
   const addBook = async (book: BookModel) => {
     books.value.push(book)
+  }
+
+  const updateBook = async (book: BookModel) => {
+    const index = books.value.findIndex(({id}) => id === book.id)
+    if (index !== -1) {
+      books.value[index] = book
+    }
   }
 
   const removeBook = async ({id}: BookModel) => {
@@ -62,7 +73,10 @@ export const useBookStore = defineStore(`book`, () => {
   }
 
   return {
+    books,
+    getBook,
     addBook,
+    updateBook,
     removeBook,
     getBooks,
     getFetchStatus,

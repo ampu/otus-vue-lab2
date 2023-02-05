@@ -9,12 +9,14 @@ lerna-debug.log*
 
 node_modules
 .DS_Store
+Thumbs.db
 dist
 dist-ssr
 build
 build-ssr
 coverage
 *.local
+tmp/
 
 /cypress/videos/
 /cypress/screenshots/
@@ -22,7 +24,7 @@ coverage
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 *.suo
 *.ntvs*
 *.njsproj

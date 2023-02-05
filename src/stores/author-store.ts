@@ -25,9 +25,18 @@ export const useAuthorStore = defineStore(`author`, () => {
     authors.value.push(author)
   }
 
+  const updateAuthor = async (author: AuthorModel) => {
+    const index = authors.value.findIndex(({id}) => id === author.id)
+    if (index !== -1) {
+      authors.value[index] = author
+    }
+  }
+
   return {
+    authors,
     getAuthors,
     getAuthor,
     addAuthor,
+    updateAuthor,
   }
 })

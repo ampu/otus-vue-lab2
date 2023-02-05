@@ -3,10 +3,11 @@ export interface BookModel {
   isbn?: string
   year?: number
   title: string
-  authorId: string
-  posterUrl: string
+  authorId?: string
+  authorIds: string[]
+  posterUrl?: string
   description: string
-  tags: string[]
+  tags?: string
   price?: number
   category: string
 }

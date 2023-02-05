@@ -1,4 +1,21 @@
 import _ from 'lodash'
+import type {RouteLocationNormalizedLoaded, Router} from 'vue-router'
+
+export const goToFullPath = async (router: Router, fullPath: string) => {
+  const url = new URL(fullPath, location.href)
+  await router.push({path: url.pathname, query: Object.fromEntries(url.searchParams), hash: url.hash})
+}
+
+export const goToNotFound = async (router: Router, route: RouteLocationNormalizedLoaded) => {
+  await router.replace({
+    name: `not-found`,
+    params: {
+      pathMatch: route.path.split(`/`).slice(1),
+    },
+    query: route.query,
+    hash: route.hash,
+  })
+}
 
 export const getPageItems = <T>(items: T[], page: number, perPage: number) => {
   const start = (page - 1) * perPage
@@ -6,8 +23,12 @@ export const getPageItems = <T>(items: T[], page: number, perPage: number) => {
   return items.slice(start, end)
 }
 
+export const getLatestPage = (total: number, perPage: number) => {
+  return Math.ceil(total / perPage)
+}
+
 export const createPagination = (page: number, total: number, perPage: number, pageRange = 3) => {
-  const totalPages = Math.ceil(total / perPage)
+  const totalPages = getLatestPage(total, perPage)
 
   page = _.clamp(page, 1, totalPages)
   pageRange = _.clamp(pageRange, totalPages)

@@ -1,13 +1,17 @@
 <template>
   <div>
-    <h1>Authors</h1>
+    <h1 class="mb-3">
+      <AuthorsIcon/>
+      Authors
+    </h1>
 
-    <div class="mb-3">
+    <div class="mb-3 d-flex flex-wrap">
       <RouterLink
-        to="/authors/add"
-        class="btn btn-primary"
+        :to="{name: `authors-add`}"
+        class="btn btn-primary d-flex align-items-center gap-1"
       >
-        Add Author
+        <AddIcon/>
+        New Author
       </RouterLink>
     </div>
 
@@ -15,8 +19,16 @@
   </div>
 </template>
 
-<style>
-</style>
 <script setup lang="ts">
+import AddIcon from '@/assets/icons/add.svg'
+import AuthorsIcon from '@/assets/icons/authors.svg'
 import AuthorList from '@/components/author/AuthorList.vue'
 </script>
+
+<style lang="scss" scoped>
+h1 {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+</style>

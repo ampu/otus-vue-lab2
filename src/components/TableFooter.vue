@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import {computed} from 'vue'
-import APagination from '@/components/APagination.vue'
+import APagination from '@/components/widgets/APagination.vue'
 
 const props = defineProps<{
   isFiltered: boolean

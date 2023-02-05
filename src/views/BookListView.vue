@@ -1,13 +1,17 @@
 <template>
   <div>
-    <h1>Books</h1>
+    <h1 class="mb-3">
+      <BooksIcon/>
+      Books
+    </h1>
 
-    <div class="mb-3">
+    <div class="mb-3 d-flex flex-wrap">
       <RouterLink
-        to="/books/add"
-        class="btn btn-primary"
+        :to="{name: `books-add`}"
+        class="btn btn-primary d-flex align-items-center gap-1"
       >
-        Add Book
+        <AddIcon/>
+        New Book
       </RouterLink>
     </div>
 
@@ -15,8 +19,17 @@
   </div>
 </template>
 
-<style>
-</style>
 <script setup lang="ts">
+import AddIcon from '@/assets/icons/add.svg'
+import BooksIcon from '@/assets/icons/books.svg'
 import BookList from '@/components/book/BookList.vue'
 </script>
+
+<style lang="scss" scoped>
+h1 {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+</style>
+

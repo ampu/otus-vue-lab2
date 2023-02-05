@@ -33,10 +33,15 @@ enum IndustryIdentifierType {
   ISBN_13 = `ISBN_13`,
 }
 
-const convertBookAndAuthor = (remoteBookModel: RemoteBookModel): { book: BookModel, author: AuthorModel } => {
+interface BookAndAuthors {
+  book: BookModel
+  authors: AuthorModel[]
+}
+
+const convertBookAndAuthors = (remoteBookModel: RemoteBookModel): BookAndAuthors => {
   const {id, volumeInfo, saleInfo} = remoteBookModel
   const {title, authors: remoteAuthorNames, publishedDate, description, industryIdentifiers, imageLinks, categories} = volumeInfo
-  const [author] = remoteAuthorNames?.map(convertAuthor) ?? []
+  const authors = remoteAuthorNames?.map(convertAuthor) ?? []
   const [category] = categories ?? []
 
   const book: BookModel = {
@@ -44,15 +49,14 @@ const convertBookAndAuthor = (remoteBookModel: RemoteBookModel): { book: BookMod
     isbn: industryIdentifiers?.find(({type}) => type === IndustryIdentifierType.ISBN_13)?.identifier,
     year: Number.parseInt(publishedDate) || undefined,
     title,
-    authorId: author?.id,
+    authorIds: authors.map(({id}) => id),
     posterUrl: imageLinks.thumbnail,
     description,
-    tags: [],
     price: saleInfo.retailPrice?.amount,
     category,
   }
 
-  return {book, author}
+  return {book, authors}
 }
 
 const convertAuthor = (remoteAuthorName: string): AuthorModel => {
@@ -62,16 +66,26 @@ const convertAuthor = (remoteAuthorName: string): AuthorModel => {
   }
 }
 
+const extractAuthors = (bookAndAuthors: BookAndAuthors[]): Map<string, AuthorModel> => {
+  const idToAuthor = new Map<string, AuthorModel>()
+  for (const {authors} of bookAndAuthors) {
+    for (const author of authors) {
+      idToAuthor.set(author.id, author)
+    }
+  }
+  return idToAuthor
+}
+
 export default {
   async getBooks(query: string) {
     const json = await fetch(`${BookEndpoint.GET_BOOKS}?q=${encodeURIComponent(query)}`)
       .then(response => response.json()) as GetBooksJson
 
-    const bookAndAuthors = json.items.map(convertBookAndAuthor)
-
+    const bookAndAuthors = json.items.map(convertBookAndAuthors)
+    const idToAuthor = extractAuthors(bookAndAuthors)
     return {
       books: bookAndAuthors.map(({book}) => book).filter(Boolean),
-      authors: bookAndAuthors.map(({author}) => author).filter(Boolean),
+      authors: Array.from(idToAuthor.values()),
     }
   }
 }

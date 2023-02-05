@@ -31,7 +31,7 @@
     </li>
 
     <li
-      v-for="aPage in pagination.pagesInRange"
+      v-for="aPage of pagination.pagesInRange"
       :key="aPage"
       :class="{
         [`APagination__page`]: true,
@@ -94,7 +94,7 @@
 <script setup lang="ts">
 import {computed, watch} from 'vue'
 
-import {createPagination} from '@/helpers/pagination-helpers'
+import {createPagination} from '@/helpers/navigation-helpers'
 
 const TRANSLATIONS = {
   en: {

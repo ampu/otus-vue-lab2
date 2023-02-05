@@ -3,7 +3,7 @@ import {createPinia} from 'pinia'
 
 import App from './App.vue'
 import router from './router'
-import installDirectives from '@/directives'
+import Directives from '@/directives'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
@@ -11,10 +11,14 @@ import 'bootstrap/dist/js/bootstrap.min.js'
 import './assets/main.scss'
 
 const app = createApp(App)
+const pinia = createPinia()
 
-installDirectives(app)
-
-app.use(createPinia())
+app.use(Directives)
+app.use(pinia)
 app.use(router)
 
-app.mount('#app')
+Object.assign(window, {
+  app: app.mount('#app'),
+  router,
+  pinia,
+})

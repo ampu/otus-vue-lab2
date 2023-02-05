@@ -2,7 +2,7 @@
   <table class="table table-striped align-middle text-center">
     <thead>
       <tr class="title">
-        <th style="width: 20%">Author</th>
+        <th style="width: 20%">Authors</th>
         <th style="width: 5%"></th>
         <th>Title</th>
         <th style="width: 15%">Year</th>
@@ -86,7 +86,13 @@
         :key="book.id"
       >
         <td>
-          {{ getAuthor(book.authorId)?.name ?? `-` }}
+          <ul class="author-list">
+            <li
+              v-for="(authorText, authorKey) in formatAuthors(book.authorIds)"
+              :key="authorKey"
+              v-text="authorText"
+            />
+          </ul>
         </td>
         <td>
           <img
@@ -94,7 +100,9 @@
             :src="book.posterUrl"
             :alt="book.title"
             :title="book.title"
-            height="50"
+            height="60"
+            width="40"
+            class="poster"
           />
         </td>
         <td class="text-start">
@@ -110,13 +118,23 @@
           {{ book.price ? `${book.price?.toFixed(2)} ₽` : `-` }}
         </td>
         <td>
-          <button
-            type="button"
-            class="btn btn-outline-danger"
-            @click="removeBook(book)"
-          >
-            &times;
-          </button>
+          <div class="d-flex gap-2">
+            <button
+              type="button"
+              class="btn btn-outline-secondary action"
+              @click="router.push({name: `books-edit`, params: {bookId: book.id}, query: {redirect: route.fullPath}})"
+            >
+              <PencilIcon/>
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-outline-danger action"
+              @click="removeBook(book)"
+            >
+              &times;
+            </button>
+          </div>
         </td>
       </tr>
     </tbody>
@@ -134,14 +152,19 @@
 
 <script setup lang="ts">
 import {onBeforeMount, computed, ref} from 'vue'
+import {useRouter, useRoute} from 'vue-router'
+import PencilIcon from '@/assets/icons/edit.svg'
 
 import {useBookStore} from '@/stores/book-store'
 import type {BookFilterModel} from '@/helpers/book-types'
 import {useAuthorStore} from '@/stores/author-store'
 import {OpStatus} from '@/helpers/op-types'
 import TableFooter from '@/components/TableFooter.vue'
-import {getPageItems} from '@/helpers/pagination-helpers'
+import {getLatestPage, getPageItems} from '@/helpers/navigation-helpers'
+import {usePage} from '@/hooks/use-page'
 
+const router = useRouter()
+const route = useRoute()
 const {getBooks, fetchBooks, getFetchStatus, removeBook} = useBookStore()
 const {getAuthor} = useAuthorStore()
 
@@ -153,8 +176,25 @@ const filteredBooks = computed(() => getBooks(filter.value))
 const pageBooks = computed(() => getPageItems(filteredBooks.value, page.value, perPage.value))
 const isEmpty = computed(() => allBooks.value.length === 0)
 const isEmptyByFilter = computed(() => filteredBooks.value.length === 0)
-const page = ref(1)
 const perPage = ref(5)
+const page = usePage(`books`, () => getLatestPage(filteredBooks.value.length, perPage.value))
+
+const formatAuthors = (authorIds: string[]) => {
+  const authors = authorIds.map(getAuthor)
+  if (authors.length === 0) {
+    return {
+      [``]: `-`,
+    }
+  }
+  if (authors.length < 3) {
+    return Object.fromEntries(authors.map((author) => [author?.id, author?.name]))
+  }
+  const [author] = authors
+  return {
+    [String(author?.id)]: author?.name,
+    [``]: `and ${authors.length - 1} more`,
+  }
+}
 
 onBeforeMount(fetchBooks)
 </script>
@@ -184,5 +224,22 @@ onBeforeMount(fetchBooks)
       }
     }
   }
+}
+
+.action {
+  width: 42px;
+  height: 42px;
+}
+
+.poster {
+  width: 40px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.author-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 </style>
